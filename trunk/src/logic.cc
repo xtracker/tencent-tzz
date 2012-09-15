@@ -30,9 +30,9 @@ bool SeedGetter::init_seed_index() {
     }
 }
 
-bool get_nearby_seed_ids(float x, float y,
+bool SeedGetter::get_nearby_seed_ids(float x, float y,
         std::vector<int> *ids) {
-    vector<cmp_point> points;
+    std::vector<cmp_point> points;
     for (int i = 0; i < _index.size(); i++) {
         float dis = (x - _index[i]._x) * (x - _index[i]._x) +
             (y - _index[i]._y) * (y - _index[i]._y);
@@ -48,20 +48,20 @@ bool get_nearby_seed_ids(float x, float y,
     return true;
 }
 
-bool search_nearby_seed(float x, float y) {
+bool SeedGetter::search_nearby_seed(float x, float y) {
     std::vector<int> ids;
     get_nearby_seed_ids(x, y, &ids);
     std::vector<Seed> ret;
     _sql_conn->get_seed_list(ids, &ret);
 
     // for test
-    for (auto it = ret.begin(); it != ret->end(); it++) {
+    for (std::vector<Seed>::iterator it = ret.begin(); it != ret.end(); it++) {
         Seed &cur = *it;
         printf("%s %s %s %s %f %f\n",
-                it->_title,
-                it->_detail,
-                it->_image_url,
-                it->_user_name,
+                it->_title.c_str(),
+                it->_detail.c_str(),
+                it->_image_url.c_str(),
+                it->_user_name.c_str(),
                 it->_x,
                 it->_y);
     }
