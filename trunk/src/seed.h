@@ -21,3 +21,13 @@ public:
     float _y;
     int _seed_id;
 };
+
+class Site {
+public:
+    float _x;
+    float _y;
+    std::string _name;
+    std::string _detail;
+    std::string _image_url;
+    int _site_id;
+};

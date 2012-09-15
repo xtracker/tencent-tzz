@@ -129,3 +129,15 @@ bool SeedGetter::get_seed_of_user(const int user_id, std::vector<Seed> *ret) {
     print_ret_list(ret);
     return true;
 }
+
+bool SeedGetter::get_all_site(std::vector<Site> *ret) {
+    //_sql_conn->get_all_seed(ret);
+    _sql_conn->get_all_site(&_site_ret);
+    for (int i = 0; i < _site_ret.size(); i++) {
+        ret->push_back(_site_ret[i]);
+    }
+    return true;
+}
+
+bool SeedGetter::get_site_router(const float x, const float y) {
+}

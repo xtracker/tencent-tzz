@@ -9,6 +9,7 @@
 
 class Seed;
 class SeedIndex;
+class Site;
 //struct MYSQL;
 
 class SqlConn {
@@ -26,6 +27,8 @@ public:
     bool feed_seed_by_user(const int user_id, Seed *ret);
     bool get_seed_by_user(const int user_id,
             std::vector<Seed> *);
+
+    bool get_all_site(std::vector<Site> *ret);
 
 private:
     /*

@@ -10,6 +10,11 @@
 #include <pthread.h>
 #include <string>
 
+#include "logic.h"
+#include "seed.h"
+
+#include <vector>
+
 const int MAX_BUFF_SIZE = 1024;
 
 bool init_socket_server(int *server_sockfd) {
@@ -85,6 +90,34 @@ bool parser_http_header_getter(const char *header, size_t len,
     return true;
 }
 
+void get_nearby_seed(float x, float y, int sockfd) {
+    std::vector<Seed> ret;
+    SeedGetter seed_getter;
+    seed_getter.init_seed_index();
+
+    seed_getter.search_nearby_seed(x, y, &ret);
+    char buff[1024];
+    int len = ret.size();
+    int pos = 0;
+    if (len != 1) buff[pos++] = '[';
+    for (int i = 0 ; i < ret.size(); i++) {
+        pos += sprintf(buff + pos, "{\"Detail\"},", ret[i]._detail.c_str());
+//        pos += sprintf(buff + pos, 
+//                "\{\"Detail\":\"%s\"\, \"Image\":\"%s\"\, \"Place\":\"%s\"\,
+//                \"UserName\":\"%s\"\,
+//                \"ViewImage\":\"%s\"\,
+//                \"Title\":\"%s\"\}\,",
+//                ret[i]._detail.c_str(), ret[i]._place.c_str(),
+//                ret[i]._user_name.c_str(),
+//                ret[i]._view_image.c_str(), ret[i]._title.c_str());
+    }
+    if (len != 1) 
+        buff[pos++] = ']';
+    buff[pos] = '\0';
+    printf("%s\n", buff);
+    send(sockfd, buff, pos, 0);
+}
+
 void* accept_client(void *p_sockfd) {
     int sockfd = *(int*)p_sockfd;
     //printf("doing somthing stuff...\n");
@@ -97,8 +130,9 @@ void* accept_client(void *p_sockfd) {
     std::string x,y,t;
     parser_http_header_getter(buff, recvbytes, &x, &y, &t);
 
-    std::string mock_json = "{\"title\":\"test_seed\"}";
-    send(sockfd, mock_json.c_str(), mock_json.size(), 0);
+    get_nearby_seed(atof(x.c_str()), atof(y.c_str()), sockfd);
+    //std::string mock_json = "{\"title\":\"test_seed\"}";
+    //send(sockfd, mock_json.c_str(), mock_json.size(), 0);
     close(sockfd);
 }
 
