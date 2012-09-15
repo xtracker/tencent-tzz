@@ -37,6 +37,54 @@ bool init_socket_server(int *server_sockfd) {
     return true;
 }
 
+bool parser_http_header_getter(const char *header, size_t len,
+                                std::string *x, std::string *y, std::string *t) {
+    const char *pos_start, *pos_end;
+    for (pos_start = header; pos_start < header + len - 2; pos_start++) {
+        if (*pos_start == 'G' && *(pos_start + 1) == 'E' &&
+            *(pos_start + 2) == 'T') {
+            break;
+        }
+    }
+    pos_start += 4;
+    for (pos_end = pos_start; pos_end < header + len; pos_end++) {
+        if (*pos_end == ' ')
+            break;
+    }
+
+    if (pos_end == header + len) {
+        return false;
+    }
+    
+    const char *ptr = pos_start + 1;
+    int flag = 0;
+    while (1) {
+        printf("....%c\n", *ptr);
+        if (ptr == pos_end) break;
+        if (flag == 0) {
+            if (*ptr == 'x') {
+                flag = 1;
+            } else if (*ptr == 'y') {
+                flag = 2;
+            } else if (*ptr == 't') {
+                flag = 3;
+            }
+            ptr += 1;
+        } else {
+            if (*ptr == '&') {
+                flag = 0;
+            } else {
+                printf("....%c\n", *ptr);
+                if (flag == 1) x->push_back(*ptr);  
+                else if (flag == 2) y->push_back(*ptr);
+                else if (flag == 3) t->push_back(*ptr);
+            }
+        }
+        ptr++;
+    }
+    return true;
+}
+
 void* accept_client(void *p_sockfd) {
     int sockfd = *(int*)p_sockfd;
     //printf("doing somthing stuff...\n");
@@ -46,6 +94,9 @@ void* accept_client(void *p_sockfd) {
     buff[recvbytes] = '\0';
     printf("%s\n", buff);
     
+    std::string x,y,t;
+    parser_http_header_getter(buff, recvbytes, &x, &y, &t);
+
     std::string mock_json = "{\"title\":\"test_seed\"}";
     send(sockfd, mock_json.c_str(), mock_json.size(), 0);
     close(sockfd);
