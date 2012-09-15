@@ -19,6 +19,7 @@ public:
             const int user_id, 
             const float x, const float y);
     bool get_all_seed(std::vector<Seed> *);
+    bool get_seed_of_user(const int, std::vector<Seed> *);
 
 private:
     bool get_nearby_seed_ids(float x, float y,
