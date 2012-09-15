@@ -9,6 +9,7 @@ public:
     std::string _image_url;
     std::string _user_name;
     std::string _place;
+    std::string _view_image;
     int _user_id;
     float _x;
     float _y;
