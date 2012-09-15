@@ -19,9 +19,12 @@ public:
     }
 
     std::vector<SeedIndex> get_seed_index();
-    Seed get_seed(int seed_id);
-    std::vector<Seed> get_seed_lists(const std::vector<int> &seed_ids);
+    bool get_seed(const int seed_id, Seed *ret);
+    bool get_seed_list(const std::vector<int> &seed_ids,
+                        std::vector<Seed> *ret);
     bool insert_seed(const Seed &seed);
+
+    bool feed_seed_by_user(const int user_id, Seed *ret);
 
     /*
      * operator of mysql conn
