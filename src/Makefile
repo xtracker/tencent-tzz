@@ -15,4 +15,5 @@ mysql_ops.o: mysql_ops.cc
 mock.o.o: mock.cc
 	$(cc) -c $<
 
-clean:  *.o a.out
+clean: 
+	rm *.o a.out

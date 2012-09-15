@@ -64,6 +64,7 @@ bool SqlConn::get_seed(const int seed_id, Seed *ret) {
     ret->_title = std::string(row[1]);
     ret->_detail = std::string(row[2]);
     ret->_user_id = atoi(row[3]);
+    ret->_place = std::string(row[6]);
 
     feed_seed_by_user(atoi(row[3]), ret);
     return true;
@@ -127,9 +128,20 @@ bool SqlConn::get_seed_by_user(const int user_id,
         seed_tmp._user_id = atoi(row[3]);
         seed_tmp._x = atof(row[4]);
         seed_tmp._y = atof(row[5]);
+        seed_tmp._place = std::string(row[6]);
         feed_seed_by_user(user_id, &seed_tmp);
         ret->push_back(seed_tmp);
         row = mysql_fetch_row(result);
     }
     return true; 
+}
+
+bool SqlConn::seedrowcvt2seed(const MYSQL_ROW &row, Seed *seed) {
+    seed->_title = std::string(row[1]);
+    seed->_detail = std::string(row[2]);
+    seed->_user_id = atoi(row[3]);
+    seed->_x = atof(row[4]);
+    seed->_y = atof(row[5]);
+    seed->_place = std::string(row[6]);
+    //feed_seed_by_user(
 }
