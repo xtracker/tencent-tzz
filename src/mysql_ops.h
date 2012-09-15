@@ -24,6 +24,8 @@ public:
                         std::vector<Seed> *ret);
     bool insert_seed(const Seed &seed);
     bool feed_seed_by_user(const int user_id, Seed *ret);
+    bool get_seed_by_user(const int user_id,
+            std::vector<Seed> *);
 
     /*
      * operator of mysql conn

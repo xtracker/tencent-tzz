@@ -5,6 +5,20 @@
 #include <stdio.h>
 #include <algorithm>
 
+// print func, for test
+void print_ret_list(const std::vector<Seed> *ret) {
+    for (int i = 0; i < ret->size(); i++) {
+        const Seed *it = &(ret->at(i));
+        printf("%s %s %s %s %f %f\n",
+                it->_title.c_str(),
+                it->_detail.c_str(),
+                it->_image_url.c_str(),
+                it->_user_name.c_str(),
+                it->_x,
+                it->_y);
+    }
+}
+
 struct cmp_point {
     float dis;
     int id;
@@ -24,6 +38,8 @@ SeedGetter::~SeedGetter() {
 
 bool SeedGetter::init_seed_index() { 
     _index = _sql_conn->get_seed_index();
+    // for test
+    printf("build search index...\n");
     for (int i = 0; i < _index.size(); i++) {
         printf("%d %f %f\n", _index[i]._seed_id,
                 _index[i]._x, _index[i]._y);
@@ -102,4 +118,9 @@ bool SeedGetter::get_all_seed(std::vector<Seed> *ret) {
                 it->_y);
     }
     return true;
+}
+
+bool SeedGetter::get_seed_of_user(const int user_id, std::vector<Seed> *ret) {
+    _sql_conn->get_seed_by_user(user_id, ret);
+    print_ret_list(ret);
 }

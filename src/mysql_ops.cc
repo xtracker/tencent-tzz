@@ -109,3 +109,27 @@ bool SqlConn::insert_seed(const Seed &seed) {
     printf("%s\n", sql_srt);
     mysql_query(&mysql, sql_srt);
 }
+
+bool SqlConn::get_seed_by_user(const int user_id,
+        std::vector<Seed> *ret) {
+    char sql_str[100];
+    sprintf(sql_str, "select * from seed where user_id = \"%d\"", user_id); 
+    mysql_query(&mysql, sql_str);
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    if (result == NULL)
+        return false;    
+    MYSQL_ROW row;
+    row = mysql_fetch_row(result);
+    while (row != NULL) {
+        Seed seed_tmp;
+        seed_tmp._title = std::string(row[1]);
+        seed_tmp._detail = std::string(row[2]);
+        seed_tmp._user_id = atoi(row[3]);
+        seed_tmp._x = atof(row[4]);
+        seed_tmp._y = atof(row[5]);
+        feed_seed_by_user(user_id, &seed_tmp);
+        ret->push_back(seed_tmp);
+        row = mysql_fetch_row(result);
+    }
+    return true; 
+}
