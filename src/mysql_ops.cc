@@ -33,6 +33,7 @@ std::vector<SeedIndex> SqlConn::get_seed_index() {
         return ret;    
     MYSQL_ROW row;
     row = mysql_fetch_row(result);
+    while (row != NULL) {
         SeedIndex tmp;
         tmp._seed_id = atoi(row[0]);
         tmp._x = atof(row[4]);
@@ -43,8 +44,11 @@ std::vector<SeedIndex> SqlConn::get_seed_index() {
 }
 
 bool SqlConn::get_seed(const int seed_id, Seed *ret) {
-    std::string sql_str = "select * from seed where id = \"" + seed_id + "\"";
-    mysql_query(&mysql, sql_str.c_str());
+//    std::string sql_str = std::string("select * from seed where id = \"") +
+//        seed_id + std::string("\"");
+    char sql_str[100];
+    sprintf(sql_str, "select * from seed where id = \"%d\"", seed_id);
+    mysql_query(&mysql, sql_str);
     MYSQL_RES *result = mysql_store_result(&mysql);
     if (result == NULL)
         return false;    
@@ -76,8 +80,11 @@ bool SqlConn::get_seed_list(const std::vector<int> &seed_ids,
 
 
 bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
-    std::string sql_str = "select * from seed where id = \"" + user_id + "\"";
-    mysql_query(&mysql, sql_str.c_str());
+//    std::string sql_str = std::string("select * from seed where id = \"") + 
+//        user_id + std::string("\"");
+    char sql_str[100];
+    sprintf(sql_str, "select * from users where id = \"%d\"", user_id);
+    mysql_query(&mysql, sql_str);
     MYSQL_RES *result = mysql_store_result(&mysql);
     if (result == NULL)
         return false;    
@@ -89,6 +96,6 @@ bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
     row = mysql_fetch_row(result);
     
     ret->_user_name = std::string(row[1]);
-    ret->_image = std::string(row[2]);
+    ret->_image_url = std::string(row[2]);
     return true;
 }
