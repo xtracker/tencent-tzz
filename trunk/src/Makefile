@@ -1,22 +1,12 @@
-cc = g++
 
-#target=seed.o
-target=mysql_ops.o
-target+=logic.o
-target+=mock.o
-#target+=server.o
+target = cgi-server
+objs = logic.o mysql_ops.o cgi-server.o
 
-a.out: $(target)
-	$(cc) $(target) -lpthread -lmysqlclient
+$(target) : $(objs)
+	$(CXX) -o $(target) $(objs) -lfcgi -lpthread -lmysqlclient
 
-logic.o: logic.cc
-	$(cc) -c $<
-mysql_ops.o: mysql_ops.cc
-	$(cc) -c $<
-mock.o.o: mock.cc
-	$(cc) -c $<
-server.o.o: server.cc
-	$(cc) -c $<
 
-clean: 
-	rm *.o a.out
+all : $(target)
+
+clean:
+	rm $(objs) $(target)
