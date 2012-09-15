@@ -27,11 +27,14 @@ public:
     bool get_seed_by_user(const int user_id,
             std::vector<Seed> *);
 
+private:
     /*
      * operator of mysql conn
      */
     bool init_mysql();
     bool close_mysql();
+    bool rowcvt2seed(const MYSQL_ROW &row, Seed *seed);
+
 private:
     MYSQL mysql;
 };
