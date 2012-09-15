@@ -4,6 +4,7 @@ cc = g++
 target=mysql_ops.o
 target+=logic.o
 target+=mock.o
+#target+=server.o
 
 a.out: $(target)
 	$(cc) $(target) -lpthread -lmysqlclient
@@ -13,6 +14,8 @@ logic.o: logic.cc
 mysql_ops.o: mysql_ops.cc
 	$(cc) -c $<
 mock.o.o: mock.cc
+	$(cc) -c $<
+server.o.o: server.cc
 	$(cc) -c $<
 
 clean: 
