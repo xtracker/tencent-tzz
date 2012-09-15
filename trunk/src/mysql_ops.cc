@@ -103,7 +103,7 @@ bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
 
 bool SqlConn::insert_seed(const Seed &seed) {
     char sql_srt[100];
-    sprintf(sql_srt, "insert seed value ("",%s,%s,%d,%f,%f)",
+    sprintf(sql_srt, "insert seed value (\"\",\"%s\",%s,%d,%f,%f)",
             seed._title.c_str(), seed._detail.c_str(),
             seed._user_id, seed._x, seed._y);
     mysql_query(&mysql, sql_srt);
