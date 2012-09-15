@@ -13,9 +13,7 @@ class SeedIndex;
 
 class SqlConn {
 public:
-    SqlConn() {
-        init_mysql();
-    }
+    SqlConn();
     ~SqlConn() {
         close_mysql();
     }
