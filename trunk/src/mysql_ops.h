@@ -23,7 +23,6 @@ public:
     bool get_seed_list(const std::vector<int> &seed_ids,
                         std::vector<Seed> *ret);
     bool insert_seed(const Seed &seed);
-
     bool feed_seed_by_user(const int user_id, Seed *ret);
 
     /*

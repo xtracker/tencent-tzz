@@ -8,6 +8,7 @@ public:
     std::string _detail;
     std::string _image_url;
     std::string _user_name;
+    int _user_id;
     float _x;
     float _y;
 };
