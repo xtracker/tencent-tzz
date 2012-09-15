@@ -31,11 +31,8 @@ std::vector<SeedIndex> SqlConn::get_seed_index() {
     MYSQL_RES *result = mysql_store_result(&mysql);
     if (result == NULL)
         return ret;    
-    printf("ok\n");
     MYSQL_ROW row;
     row = mysql_fetch_row(result);
-    printf("ok\n");
-    while (NULL != row) {
         SeedIndex tmp;
         tmp._seed_id = atoi(row[0]);
         tmp._x = atof(row[4]);
@@ -43,6 +40,55 @@ std::vector<SeedIndex> SqlConn::get_seed_index() {
         ret.push_back(tmp);
         row = mysql_fetch_row(result);
     }
-    printf("ok\n");
 }
 
+bool SqlConn::get_seed(const int seed_id, Seed *ret) {
+    std::string sql_str = "select * from seed where id = \"" + seed_id + "\"";
+    mysql_query(&mysql, sql_str.c_str());
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    if (result == NULL)
+        return false;    
+    int row_count = mysql_num_rows(result);
+    if (row_count != 1) {
+        return false;
+    }
+    MYSQL_ROW row;
+    row = mysql_fetch_row(result);
+    
+    ret->_x = atof(row[4]);
+    ret->_y = atof(row[5]);
+    ret->_title = std::string(row[1]);
+    ret->_detail = std::string(row[2]);
+
+    feed_seed_by_user(atoi(row[3]), ret);
+    return true;
+}
+
+bool SqlConn::get_seed_list(const std::vector<int> &seed_ids,
+                            std::vector<Seed> *ret) {
+    for (int i = 0; i < seed_ids.size(); i++) {
+        Seed tmp;
+        get_seed(seed_ids[i], &tmp);
+        ret->push_back(tmp);
+    }
+    return true;
+}
+
+
+bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
+    std::string sql_str = "select * from seed where id = \"" + user_id + "\"";
+    mysql_query(&mysql, sql_str.c_str());
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    if (result == NULL)
+        return false;    
+    int row_count = mysql_num_rows(result);
+    if (row_count != 1) {
+        return false;
+    }
+    MYSQL_ROW row;
+    row = mysql_fetch_row(result);
+    
+    ret->_user_name = std::string(row[1]);
+    ret->_image = std::string(row[2]);
+    return true;
+}
