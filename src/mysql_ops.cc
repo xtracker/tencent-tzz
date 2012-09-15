@@ -144,7 +144,7 @@ bool SqlConn::seedrowcvt2seed(const MYSQL_ROW &row, Seed *seed) {
     //feed_seed_by_user(
 }
 
-bool SqlConn::get_all_site(std::vector<Site> *ret) {
+bool SqlConn::get_all_site(std::vector<Pri_Site> *ret) {
     std::string sql_str = "select * from site";
     mysql_query(&mysql, sql_str.c_str());
     MYSQL_RES *result = mysql_store_result(&mysql);
@@ -153,12 +153,14 @@ bool SqlConn::get_all_site(std::vector<Site> *ret) {
     MYSQL_ROW row;
     row = mysql_fetch_row(result);
     while (row != NULL) {
-        Site site_tmp;
+        Pri_Site site_tmp;
         site_tmp._x = atof(row[2]);
         site_tmp._y = atof(row[3]);
         site_tmp._name = std::string(row[1]);
         site_tmp._detail = std::string(row[4]);
         site_tmp._image_url = std::string(row[5]);
+        site_tmp._park_id = atoi(row[6]);
+        site_tmp._score = atoi(row[7]);
         
         ret->push_back(site_tmp);
         row = mysql_fetch_row(result);

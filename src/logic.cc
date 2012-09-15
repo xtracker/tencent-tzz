@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <math.h>
+#include <map>
 
 #define PI      3.1415926
 #define EARTH_RADIUS 6378.137
@@ -130,7 +131,7 @@ bool SeedGetter::get_seed_of_user(const int user_id, std::vector<Seed> *ret) {
     return true;
 }
 
-bool SeedGetter::get_all_site(std::vector<Site> *ret) {
+bool SeedGetter::get_all_site(std::vector<Pri_Site> *ret) {
     //_sql_conn->get_all_seed(ret);
     _sql_conn->get_all_site(&_site_ret);
     for (int i = 0; i < _site_ret.size(); i++) {
@@ -139,5 +140,72 @@ bool SeedGetter::get_all_site(std::vector<Site> *ret) {
     return true;
 }
 
-bool SeedGetter::get_site_router(const float x, const float y) {
+struct router_point {
+    float dis;
+    int weight;
+    int id;
+};
+
+int find_best_site(float x, float y, std::vector<Pri_Site*> &leaves) {
+    float value = 0;
+    int flag = 0;
+    float belt = 0.4;
+    for (int i = 0; i < leaves.size(); i++) {
+        Pri_Site *next_site = leaves[i];
+        float dis = get_distance(x, y, next_site->_x, next_site->_y);
+        float val = (100.0f / dis) * belt + next_site->_score * (1 - belt);
+        if (val > value) {
+            flag = i;
+            value = val;
+        }
+    }
+    return flag;
+}
+
+void dfs_site(float x, float y, std::vector<Pri_Site*> &leaves, std::vector<int> *ret) {
+   if (leaves.size() <= 0) return; 
+
+   int flag = find_best_site(x, y, leaves);
+   ret->push_back(leaves[flag]->_site_id);
+   std::vector<Pri_Site *> nxt_leaves;
+   for (int i = 0; i < leaves.size(); i++) {
+        if (i != flag) {
+            nxt_leaves.push_back(leaves[i]);
+        }
+   }
+   dfs_site(leaves[flag]->_x, leaves[flag]->_y, nxt_leaves, ret);
+}
+
+bool SeedGetter::get_site_router(const float x, const float y,
+        std::vector<Pri_Site> *ret) {
+    ret->clear();
+    //1= get_all_site nearby
+    std::vector<cmp_point> nearby_site;
+    std::map<int, Pri_Site*> key_value;
+    for (int i = 0; i < _site_ret.size(); i++) {
+        cmp_point tmp;
+        tmp.dis = get_distance(x, y, _site_ret[i]._x, _site_ret[i]._y);
+        tmp.id = _site_ret[i]._site_id;
+        nearby_site.push_back(tmp);
+        key_value.insert(std::pair<int, Pri_Site*>(_site_ret[i]._site_id,
+                    &_site_ret[i]));
+    }
+    sort(nearby_site.begin(), nearby_site.end(), cmp);
+    if (nearby_site.size() == 0 || nearby_site[0].dis > 2000)
+        return false;
+
+    int parkid = key_value[nearby_site[0].id]->_park_id;
+    std::vector<Pri_Site*> points;
+    for (int i = 0; i < _site_ret.size(); i++) {
+        if (_site_ret[i]._park_id != parkid) continue;
+        points.push_back(&_site_ret[i]);
+    }
+    std::vector<int> ret_ids;
+    dfs_site(x, y, points, &ret_ids);
+
+    for (int i = 0; i < ret_ids.size(); i++) {
+        ret->push_back(*key_value[ret_ids[i]]);
+    }
+    //vector<
+    //2= dps_search_site_router
 }
