@@ -106,5 +106,6 @@ bool SqlConn::insert_seed(const Seed &seed) {
     sprintf(sql_srt, "insert into seed values (\"\",\"%s\",\"%s\",\"%d\",\"%f\",\"%f\")",
             seed._title.c_str(), seed._detail.c_str(),
             seed._user_id, seed._x, seed._y);
+    printf("%s\n", sql_srt);
     mysql_query(&mysql, sql_srt);
 }
