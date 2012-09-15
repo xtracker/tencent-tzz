@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 SeedGetter::SeedGetter() {
+    printf("...seed getter begin\n");
     _sql_conn = new SqlConn();
 }
 SeedGetter::~SeedGetter() {

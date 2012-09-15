@@ -7,6 +7,12 @@
 #include "seed.h"
 
 
+SqlConn::SqlConn() {
+    printf("....init sqlConn\n");
+    init_mysql();
+    printf("....init sqlConn ok\n");
+}
+
 bool SqlConn::init_mysql() {
     mysql_init(&mysql);    
     if (mysql_real_connect(&mysql, "localhost", "root", "", "tencent",
@@ -19,12 +25,16 @@ bool SqlConn::close_mysql() {
 }
 
 std::vector<SeedIndex> SqlConn::get_seed_index() {
+    std::vector<SeedIndex> ret;
     std::string sql_str = "select * from seed";
     mysql_query(&mysql, sql_str.c_str());
     MYSQL_RES *result = mysql_store_result(&mysql);
-    std::vector<SeedIndex> ret;
-    MYSQL_ROW row = NULL;
+    if (result == NULL)
+        return ret;    
+    printf("ok\n");
+    MYSQL_ROW row;
     row = mysql_fetch_row(result);
+    printf("ok\n");
     while (NULL != row) {
         SeedIndex tmp;
         tmp._seed_id = atoi(row[0]);
@@ -33,5 +43,6 @@ std::vector<SeedIndex> SqlConn::get_seed_index() {
         ret.push_back(tmp);
         row = mysql_fetch_row(result);
     }
+    printf("ok\n");
 }
 
