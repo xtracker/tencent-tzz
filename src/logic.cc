@@ -140,6 +140,40 @@ bool SeedGetter::get_all_site(std::vector<Pri_Site> *ret) {
     return true;
 }
 
+bool SeedGetter::search_nearby_site(int park_id,std::vector<Pri_Site> *ret) {
+    for (int i = 0; i < _site_ret.size(); i++) {
+        if (_site_ret[i]._park_id == park_id) {
+            ret->push_back(_site_ret[i]);
+        }
+    }
+    return true;
+}
+
+bool SeedGetter::search_nearby_site(float x, float y, std::vector<Pri_Site> *ret) {
+    std::vector<cmp_point> nearby_site;
+    std::map<int, Pri_Site*> key_value;
+    for (int i = 0; i < _site_ret.size(); i++) {
+        cmp_point tmp;
+        tmp.dis = get_distance(x, y, _site_ret[i]._x, _site_ret[i]._y);
+        tmp.id = _site_ret[i]._site_id;
+        nearby_site.push_back(tmp);
+        key_value.insert(std::pair<int, Pri_Site*>(_site_ret[i]._site_id,
+                    &_site_ret[i]));
+    }
+    sort(nearby_site.begin(), nearby_site.end(), cmp);
+    if (nearby_site.size() == 0 || nearby_site[0].dis > 2000)
+        return false;
+
+    int parkid = key_value[nearby_site[0].id]->_park_id;
+    //std::vector<Pri_Site*> points;
+    for (int i = 0; i < _site_ret.size(); i++) {
+        if (_site_ret[i]._park_id != parkid) continue;
+        //points.push_back(&_site_ret[i]);
+        ret->push_back(_site_ret[i]);
+    }
+    return true;
+}
+
 struct router_point {
     float dis;
     int weight;

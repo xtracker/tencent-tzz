@@ -22,9 +22,13 @@ public:
     bool get_all_seed(std::vector<Seed> *);
     bool get_seed_of_user(const int, std::vector<Seed> *);
 
+    // get router
     bool get_site_router(const float x, const float y,
             std::vector<Pri_Site> *ret);
     bool get_all_site(std::vector<Pri_Site> *ret);
+    bool search_nearby_site(int, std::vector<Pri_Site> *ret);
+    // get site
+    bool search_nearby_site(float, float, std::vector<Pri_Site> *ret);
 
 private:
     bool get_nearby_seed_ids(float x, float y,
