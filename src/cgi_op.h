@@ -31,7 +31,7 @@ size_t seed_to_json(const std::vector<Seed> &seed_vec, char *json_str)
 	size_t cur = 0;
 	json_str[cur++] = '[';
 	for (size_t i = 0; i< seed_vec.size(); ++i) {
-		cur += sprintf(json_str + cur, "{\"Detail\":\"%s\",\"Images\":%s,\"Place\":\"%s\",\"Title\":\"%s\",\"UserName\":\"%s\",\"ViewImage\":\"%s\"},",
+		cur += sprintf(json_str + cur, "{\"Detail\":\"%s\",\"Image\":\"%s\",\"Place\":\"%s\",\"Title\":\"%s\",\"UserName\":\"%s\",\"ViewImage\":\"%s\"},",
 				seed_vec[i]._detail.c_str(),
 				seed_vec[i]._image_url.c_str(),
 				seed_vec[i]._place.c_str(),
@@ -39,6 +39,7 @@ size_t seed_to_json(const std::vector<Seed> &seed_vec, char *json_str)
 				seed_vec[i]._user_name.c_str(),
 				seed_vec[i]._view_image.c_str());
 	}
+	--cur;
 	json_str[cur++] = ']';
 	json_str[cur++] = '\0';
 	return cur;
