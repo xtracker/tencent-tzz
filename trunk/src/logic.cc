@@ -84,7 +84,7 @@ bool SeedGetter::get_nearby_seed_ids(float x, float y,
     }
     sort(points.begin(), points.end(), cmp);
     for (int i = 0; i < 20 && i < points.size(); i++) {
-        if (points[i].dis > 1000) break;
+        if (points[i].dis > 5000) break;
         ids->push_back(points[i].id);
     }
     return true;
