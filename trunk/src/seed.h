@@ -22,12 +22,14 @@ public:
     int _seed_id;
 };
 
-class Site {
+class Pri_Site {
 public:
     float _x;
     float _y;
     std::string _name;
     std::string _detail;
     std::string _image_url;
+    int _park_id;
+    int _score;
     int _site_id;
 };
