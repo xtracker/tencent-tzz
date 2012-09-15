@@ -48,14 +48,50 @@ bool SeedGetter::get_nearby_seed_ids(float x, float y,
     return true;
 }
 
-bool SeedGetter::search_nearby_seed(float x, float y) {
+bool SeedGetter::search_nearby_seed(float x, float y,
+        std::vector<Seed> *ret) {
     std::vector<int> ids;
     get_nearby_seed_ids(x, y, &ids);
-    std::vector<Seed> ret;
-    _sql_conn->get_seed_list(ids, &ret);
+    _sql_conn->get_seed_list(ids, ret);
 
     // for test
-    for (std::vector<Seed>::iterator it = ret.begin(); it != ret.end(); it++) {
+    for (std::vector<Seed>::iterator it = ret->begin(); it != ret->end(); it++) {
+        Seed &cur = *it;
+        printf("%s %s %s %s %f %f\n",
+                it->_title.c_str(),
+                it->_detail.c_str(),
+                it->_image_url.c_str(),
+                it->_user_name.c_str(),
+                it->_x,
+                it->_y);
+    }
+    return true;
+}
+
+bool SeedGetter::add_neww_seed(const std::string &title, 
+        const std::string &detail, 
+        const int user_id, 
+        const float x, const float y) {
+    // get the date
+    Seed seed;
+    seed._title = title;
+    seed._detail = detail;
+    seed._user_id = user_id;
+    seed._x = x;
+    seed._y = y;
+
+    _sql_conn->insert_seed(seed);
+}
+
+bool SeedGetter::get_all_seed(std::vector<Seed> *ret) {
+    std::vector<int> ids;
+    for (int i = 0; i < _index.size(); i++) {
+        ids.push_back(_index[i]._seed_id);
+    }
+
+    _sql_conn->get_seed_list(ids, ret);
+    // for test
+    for (std::vector<Seed>::iterator it = ret->begin(); it != ret->end(); it++) {
         Seed &cur = *it;
         printf("%s %s %s %s %f %f\n",
                 it->_title.c_str(),

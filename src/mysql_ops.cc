@@ -63,6 +63,7 @@ bool SqlConn::get_seed(const int seed_id, Seed *ret) {
     ret->_y = atof(row[5]);
     ret->_title = std::string(row[1]);
     ret->_detail = std::string(row[2]);
+    ret->_user_id = atoi(row[3]);
 
     feed_seed_by_user(atoi(row[3]), ret);
     return true;
@@ -98,4 +99,12 @@ bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
     ret->_user_name = std::string(row[1]);
     ret->_image_url = std::string(row[2]);
     return true;
+}
+
+bool SqlConn::insert_seed(const Seed &seed) {
+    char sql_srt[100];
+    sprintf(sql_srt, "insert seed value ("",%s,%s,%d,%f,%f)",
+            seed._title.c_str(), seed._detail.c_str(),
+            seed._user_id, seed._x, seed._y);
+    mysql_query(&mysql, sql_srt);
 }
