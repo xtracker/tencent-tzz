@@ -33,7 +33,7 @@ private:
      */
     bool init_mysql();
     bool close_mysql();
-    bool rowcvt2seed(const MYSQL_ROW &row, Seed *seed);
+    bool seedrowcvt2seed(const MYSQL_ROW &row, Seed *seed);
 
 private:
     MYSQL mysql;

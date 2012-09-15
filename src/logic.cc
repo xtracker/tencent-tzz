@@ -4,6 +4,29 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <math.h>
+
+#define PI      3.1415926
+#define EARTH_RADIUS 6378.137
+
+double radian(double d) {
+    return d * PI / 180.0;
+}
+
+double get_distance(double lat1, double lng1,
+                    double lat2, double lng2) {
+    double radLat1 = radian(lat1);
+    double radLat2 = radian(lat2);
+    double a = radLat1 - radLat2;
+    double b = radian(lng1) -radian(lat2);
+
+    double dst = 2 * asin((sqrt(pow(sin(a/2),2) + cos(radLat1) * cos(radLat2) *
+                    pow(sin(b/2), 2))));
+
+    dst = dst * EARTH_RADIUS;
+    dst = round(dst * 10000) / 10000;
+    return dst;
+}
 
 // print func, for test
 void print_ret_list(const std::vector<Seed> *ret) {
@@ -50,8 +73,10 @@ bool SeedGetter::get_nearby_seed_ids(float x, float y,
         std::vector<int> *ids) {
     std::vector<cmp_point> points;
     for (int i = 0; i < _index.size(); i++) {
-        float dis = (x - _index[i]._x) * (x - _index[i]._x) +
-            (y - _index[i]._y) * (y - _index[i]._y);
+//        float dis = (x - _index[i]._x) * (x - _index[i]._x) +
+//            (y - _index[i]._y) * (y - _index[i]._y);
+        float dis = get_distance(x, y, _index[i]._x, _index[i]._y);
+        printf("%f\n",dis);
         cmp_point tmp;
         tmp.dis = dis;
         tmp.id = _index[i]._seed_id;
@@ -59,6 +84,7 @@ bool SeedGetter::get_nearby_seed_ids(float x, float y,
     }
     sort(points.begin(), points.end(), cmp);
     for (int i = 0; i < 20 && i < points.size(); i++) {
+        if (points[i].dis > 1000) break;
         ids->push_back(points[i].id);
     }
     return true;
@@ -70,17 +96,6 @@ bool SeedGetter::search_nearby_seed(float x, float y,
     get_nearby_seed_ids(x, y, &ids);
     _sql_conn->get_seed_list(ids, ret);
 
-    // for test
-    for (std::vector<Seed>::iterator it = ret->begin(); it != ret->end(); it++) {
-        Seed &cur = *it;
-        printf("%s %s %s %s %f %f\n",
-                it->_title.c_str(),
-                it->_detail.c_str(),
-                it->_image_url.c_str(),
-                it->_user_name.c_str(),
-                it->_x,
-                it->_y);
-    }
     return true;
 }
 
@@ -106,21 +121,11 @@ bool SeedGetter::get_all_seed(std::vector<Seed> *ret) {
     }
 
     _sql_conn->get_seed_list(ids, ret);
-    // for test
-    for (std::vector<Seed>::iterator it = ret->begin(); it != ret->end(); it++) {
-        Seed &cur = *it;
-        printf("%s %s %s %s %f %f\n",
-                it->_title.c_str(),
-                it->_detail.c_str(),
-                it->_image_url.c_str(),
-                it->_user_name.c_str(),
-                it->_x,
-                it->_y);
-    }
     return true;
 }
 
 bool SeedGetter::get_seed_of_user(const int user_id, std::vector<Seed> *ret) {
     _sql_conn->get_seed_by_user(user_id, ret);
     print_ret_list(ret);
+    return true;
 }
