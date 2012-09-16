@@ -186,6 +186,7 @@ bool SqlConn::get_recommad(const int site_id, std::vector<Recommand> *ret) {
         Recommand recom;
         recom._title = std::string(row[1]);
         recom._detail = std::string(row[2]);
+        recom._image_url = std::string(row[4]);
 
         ret->push_back(recom);
         row = mysql_fetch_row(result);
