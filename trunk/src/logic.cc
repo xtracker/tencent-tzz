@@ -108,7 +108,9 @@ bool SeedGetter::search_nearby_seed(float x, float y,
 bool SeedGetter::add_neww_seed(const std::string &title, 
         const std::string &detail, 
         const int user_id, 
-        const float x, const float y) {
+        const float x, const float y,
+        const std::string place,
+        const std::string view_image) {
     // get the date
     Seed seed;
     seed._title = title;
@@ -116,6 +118,8 @@ bool SeedGetter::add_neww_seed(const std::string &title,
     seed._user_id = user_id;
     seed._x = x;
     seed._y = y;
+    seed._place = place;
+    seed._view_image = view_image;
 
     _sql_conn->insert_seed(seed);
 }
