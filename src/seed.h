@@ -33,3 +33,9 @@ public:
     int _score;
     int _site_id;
 };
+
+class Park {
+public:
+    std::string _name;
+    std::string _detail;
+};

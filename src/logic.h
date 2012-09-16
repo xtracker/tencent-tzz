@@ -18,7 +18,8 @@ public:
     bool add_neww_seed(const std::string &title,
             const std::string &detail, 
             const int user_id, 
-            const float x, const float y);
+            const float x, const float y,
+            const std::string place, const std::string view);
     bool get_all_seed(std::vector<Seed> *);
     bool get_seed_of_user(const int, std::vector<Seed> *);
 

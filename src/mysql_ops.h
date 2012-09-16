@@ -10,6 +10,7 @@
 class Seed;
 class SeedIndex;
 class Pri_Site;
+class Park;
 //struct MYSQL;
 
 class SqlConn {
@@ -29,6 +30,8 @@ public:
             std::vector<Seed> *);
 
     bool get_all_site(std::vector<Pri_Site> *ret);
+
+    bool get_park(const std::string &name, Park *ret);
 
 private:
     /*

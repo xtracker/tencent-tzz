@@ -172,3 +172,7 @@ bool SqlConn::get_all_site(std::vector<Pri_Site> *ret) {
     }
     return true;
 }
+
+bool SqlConn::get_park(const std::string &name, Park *ret) {
+
+}
