@@ -7,6 +7,7 @@ class Seed;
 class SeedIndex;
 class SqlConn;
 class Pri_Site;
+class Park;
 
 class SeedGetter {
 public:
@@ -30,6 +31,8 @@ public:
     bool search_nearby_site(int, std::vector<Pri_Site> *ret);
     // get site
     bool search_nearby_site(float, float, std::vector<Pri_Site> *ret);
+
+    bool get_park_info(const std::string &name, Park *ret);
 
 private:
     bool get_nearby_seed_ids(float x, float y,

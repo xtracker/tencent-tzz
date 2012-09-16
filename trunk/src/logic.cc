@@ -264,3 +264,8 @@ bool SeedGetter::get_site_router(const float x, const float y,
     //vector<
     //2= dps_search_site_router
 }
+
+bool SeedGetter::get_park_info(const std::string &name, Park *ret) {
+    _sql_conn->get_park(name, ret);
+    return true;
+}
