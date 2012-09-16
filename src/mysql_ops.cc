@@ -174,5 +174,17 @@ bool SqlConn::get_all_site(std::vector<Pri_Site> *ret) {
 }
 
 bool SqlConn::get_park(const std::string &name, Park *ret) {
+    char sql_str[100];
+    sprintf(sql_str, "select * from park where name = \"%s\"", name.c_str()); 
+    mysql_query(&mysql, sql_str);
+    MYSQL_RES *result = mysql_store_result(&mysql);
+    if (result == NULL)
+        return false;    
+    MYSQL_ROW row;
+    row = mysql_fetch_row(result);
 
+    ret->_name = std::string(row[2]);
+    ret->_detail = std::string(row[3]);
+
+    return true; 
 }
