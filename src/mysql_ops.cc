@@ -103,9 +103,10 @@ bool SqlConn::feed_seed_by_user(const int user_id, Seed *ret) {
 
 bool SqlConn::insert_seed(const Seed &seed) {
     char sql_srt[100];
-    sprintf(sql_srt, "insert into seed values (\"\",\"%s\",\"%s\",\"%d\",\"%f\",\"%f\")",
+    sprintf(sql_srt, "insert into seed values (\"\",\"%s\",\"%s\",\"%d\",\"%f\",\"%f\", \"%s\", \"%s\")",
             seed._title.c_str(), seed._detail.c_str(),
-            seed._user_id, seed._x, seed._y);
+            seed._user_id, seed._x, seed._y,
+			seed._place.c_str(), seed._view_image.c_str());
     printf("%s\n", sql_srt);
     mysql_query(&mysql, sql_srt);
 }
@@ -164,6 +165,7 @@ bool SqlConn::get_all_site(std::vector<Pri_Site> *ret) {
         site_tmp._image_url = std::string(row[5]);
         site_tmp._park_id = atoi(row[6]);
         site_tmp._score = atoi(row[7]);
+		site_tmp._site_id = atoi(row[0]);
         
         ret->push_back(site_tmp);
         row = mysql_fetch_row(result);
