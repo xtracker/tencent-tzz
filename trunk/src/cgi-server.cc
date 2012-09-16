@@ -18,6 +18,25 @@ int print_html(const char *p)
 {
 	return printf("Content-type: text/html\r\n\r\n%s", p);
 }
+
+int trim_utf8(char *s)
+{
+	int tmp;
+	char *p = s, *q = s;
+	while (*p) {
+	
+		if (*p != '%')
+			*q++ = *p++;
+		else {
+			++p;
+			sscanf(p, "%2x", &tmp);
+			*q++ = (char)tmp;
+			p += 2;
+		}
+	}
+	*q++ = 0;
+	return (int)(q - s);
+}
 int main()
 {
 	float x, y;
@@ -28,6 +47,7 @@ int main()
 	SeedGetter seed_getter;
     std::vector<Seed> ret_seed;
 	std::vector<Pri_Site> ret_site;
+	std::vector<Recommand> ret_rec;
 	while (FCGI_Accept() >= 0) {
 		ret_seed.clear();
 		ret_site.clear();
@@ -50,16 +70,24 @@ int main()
 			}
 			if (type == R_POST) {
 
+				trim_utf8(const_cast<char *>(params.c_str()));
+
 				params = params.substr(params.rfind("=") + 1, params.length());
 			
-				seed_getter.add_neww_seed("彩蛋", params.c_str(), 1, x, y);
+				seed_getter.add_neww_seed("彩蛋", params.c_str(), 1, x, y,"","");
+			}
+			if (type == R_STRATEGY) {
+			
+				seed_getter.get_recommand_info(x, y, &ret_rec);
+				stratety_to_json(ret_rec, buf);
+				//if (ret)
 			}
 			print_html(buf);
 		} else {
-			print_html("");
+
+			fread(buf, atoi(getenv("CONTENT_LENGTH")), 1, stdin);
+			print_html(buf);
 		
-			while (cin >> buf)
-				printf(buf);
 		}
 
 	}

@@ -9,7 +9,7 @@
 
 #include "seed.h"
 
-enum RequestType {R_SEEDS, R_SITES, R_ROUTES, R_POST, R_INVALID = 1024};
+enum RequestType {R_SEEDS, R_SITES, R_ROUTES, R_STRATEGY, R_POST, R_INVALID = 1024};
 
 int get(float &x, float &y, RequestType &type, std::string &str)
 {
@@ -68,5 +68,21 @@ size_t site_to_json(const std::vector<Pri_Site> &site_vec, char *json_str)
 		--cur;
 	json_str[cur++] = ']';
 	json_str[cur++] = '\0';
+	return cur;
+}
+
+size_t stratety_to_json(const std::vector<Recommand> &sty_vec, char *json_str)
+{
+	size_t cur = 0;
+	json_str[cur++] = '[';
+	for (size_t i = 0; i < sty_vec.size(); ++i) {
+		cur += sprintf(json_str + cur, "{\"Title\":\"%s\",\"Detail\":\"%s\"},",
+				sty_vec[i]._title.c_str(),
+				sty_vec[i]._detail.c_str());
+	}
+	if (sty_vec.size() != 0)
+			--cur;
+	json_str[cur++] = ']';
+	json_str[cur++] = 0;
 	return cur;
 }
