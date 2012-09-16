@@ -38,4 +38,5 @@ class Recommand {
 public:
     std::string _title;
     std::string _detail;
+    std::string _image_url;
 };
