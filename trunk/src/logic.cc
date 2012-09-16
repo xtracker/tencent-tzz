@@ -14,18 +14,23 @@ double radian(double d) {
     return d * PI / 180.0;
 }
 
+double _abs(double x) {
+	return x > 0 ? x : -x;
+}
+
 double get_distance(double lat1, double lng1,
                     double lat2, double lng2) {
-    double radLat1 = radian(lat1);
-    double radLat2 = radian(lat2);
-    double a = radLat1 - radLat2;
-    double b = radian(lng1) -radian(lat2);
-
-    double dst = 2 * asin((sqrt(pow(sin(a/2),2) + cos(radLat1) * cos(radLat2) *
-                    pow(sin(b/2), 2))));
-
-    dst = dst * EARTH_RADIUS;
-    dst = round(dst * 10000) / 10000;
+//    double radLat1 = radian(lat1);
+//    double radLat2 = radian(lat2);
+//    double a = radLat1 - radLat2;
+//    double b = radian(lng1) -radian(lat2);
+//
+//    double dst = 2 * asin((sqrt(pow(sin(a/2),2) + cos(radLat1) * cos(radLat2) *
+//                    pow(sin(b/2), 2))));
+//
+//    dst = dst * EARTH_RADIUS;
+//    dst = round(dst * 10000) / 10000;
+	double dst = _abs(lat1 - lat2) + _abs(lng1 - lng2);
     return dst;
 }
 
@@ -133,10 +138,12 @@ bool SeedGetter::get_seed_of_user(const int user_id, std::vector<Seed> *ret) {
 
 bool SeedGetter::get_all_site(std::vector<Pri_Site> *ret) {
     //_sql_conn->get_all_seed(ret);
+	_site_ret.clear();
     _sql_conn->get_all_site(&_site_ret);
-    for (int i = 0; i < _site_ret.size(); i++) {
-        ret->push_back(_site_ret[i]);
-    }
+	printf("%d\n", _site_ret.size());
+//    for (int i = 0; i < _site_ret.size(); i++) {
+//        ret->push_back(_site_ret[i]);
+//    }
     return true;
 }
 
@@ -150,6 +157,7 @@ bool SeedGetter::search_nearby_site(int park_id,std::vector<Pri_Site> *ret) {
 }
 
 bool SeedGetter::search_nearby_site(float x, float y, std::vector<Pri_Site> *ret) {
+    //_sql_conn->get_all_site(&_site_ret);
     std::vector<cmp_point> nearby_site;
     std::map<int, Pri_Site*> key_value;
     for (int i = 0; i < _site_ret.size(); i++) {
@@ -161,10 +169,13 @@ bool SeedGetter::search_nearby_site(float x, float y, std::vector<Pri_Site> *ret
                     &_site_ret[i]));
     }
     sort(nearby_site.begin(), nearby_site.end(), cmp);
-    if (nearby_site.size() == 0 || nearby_site[0].dis > 2000)
+	printf("...size %d\n", nearby_site.size());
+	printf("....dis %f\n", nearby_site[0].dis);
+    if (nearby_site.size() == 0 || nearby_site[0].dis > 20000)
         return false;
 
     int parkid = key_value[nearby_site[0].id]->_park_id;
+	printf("...parkid: %d\n", parkid);
     //std::vector<Pri_Site*> points;
     for (int i = 0; i < _site_ret.size(); i++) {
         if (_site_ret[i]._park_id != parkid) continue;
@@ -200,6 +211,7 @@ void dfs_site(float x, float y, std::vector<Pri_Site*> &leaves, std::vector<int>
    if (leaves.size() <= 0) return; 
 
    int flag = find_best_site(x, y, leaves);
+   printf("...%d\n", leaves[flag]->_site_id);
    ret->push_back(leaves[flag]->_site_id);
    std::vector<Pri_Site *> nxt_leaves;
    for (int i = 0; i < leaves.size(); i++) {
@@ -207,6 +219,11 @@ void dfs_site(float x, float y, std::vector<Pri_Site*> &leaves, std::vector<int>
             nxt_leaves.push_back(leaves[i]);
         }
    }
+//   printf("next size:%d\n", nxt_leaves.size());
+//   for (int i = 0; i < nxt_leaves.size(); i++) {
+//	printf("%d ", nxt_leaves[i]->_site_id);
+//   }
+//   printf("\n");
    dfs_site(leaves[flag]->_x, leaves[flag]->_y, nxt_leaves, ret);
 }
 
@@ -225,7 +242,7 @@ bool SeedGetter::get_site_router(const float x, const float y,
                     &_site_ret[i]));
     }
     sort(nearby_site.begin(), nearby_site.end(), cmp);
-    if (nearby_site.size() == 0 || nearby_site[0].dis > 2000)
+    if (nearby_site.size() == 0 || nearby_site[0].dis > 20000)
         return false;
 
     int parkid = key_value[nearby_site[0].id]->_park_id;
