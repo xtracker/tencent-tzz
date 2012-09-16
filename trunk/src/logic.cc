@@ -265,7 +265,20 @@ bool SeedGetter::get_site_router(const float x, const float y,
     //2= dps_search_site_router
 }
 
-bool SeedGetter::get_park_info(const std::string &name, Park *ret) {
-    _sql_conn->get_park(name, ret);
+bool SeedGetter::get_recommand_info(float x, float y, std::vector<Recommand> *ret) {
+    get_all_site(NULL);
+    std::vector<cmp_point> nearby_site;
+    for (int i = 0; i < _site_ret.size(); i++) {
+        cmp_point tmp;
+        tmp.dis = get_distance(x, y, _site_ret[i]._x, _site_ret[i]._y);
+        tmp.id = _site_ret[i]._site_id;
+        nearby_site.push_back(tmp);
+    }
+    sort(nearby_site.begin(), nearby_site.end(), cmp);
+    if (nearby_site.size() == 0 || nearby_site[0].dis > 20000)
+        return false;
+
+    int site_id = nearby_site[0].id;
+    _sql_conn->get_recommad(site_id, ret);
     return true;
 }

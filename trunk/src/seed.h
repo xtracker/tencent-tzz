@@ -34,8 +34,8 @@ public:
     int _site_id;
 };
 
-class Park {
+class Recommand {
 public:
-    std::string _name;
+    std::string _title;
     std::string _detail;
 };

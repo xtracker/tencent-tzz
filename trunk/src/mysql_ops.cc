@@ -173,18 +173,22 @@ bool SqlConn::get_all_site(std::vector<Pri_Site> *ret) {
     return true;
 }
 
-bool SqlConn::get_park(const std::string &name, Park *ret) {
+bool SqlConn::get_recommad(const int site_id, std::vector<Recommand> *ret) {
     char sql_str[100];
-    sprintf(sql_str, "select * from park where name = \"%s\"", name.c_str()); 
+    sprintf(sql_str, "select * from strategy where site_id = \"%d\"", site_id); 
     mysql_query(&mysql, sql_str);
     MYSQL_RES *result = mysql_store_result(&mysql);
     if (result == NULL)
         return false;    
     MYSQL_ROW row;
     row = mysql_fetch_row(result);
+    while (row != NULL) {
+        Recommand recom;
+        recom._title = std::string(row[2]);
+        recom._detail = std::string(row[3]);
 
-    ret->_name = std::string(row[2]);
-    ret->_detail = std::string(row[3]);
-
+        ret->push_back(recom);
+        row = mysql_fetch_row(result);
+    }
     return true; 
 }
